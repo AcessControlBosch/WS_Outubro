@@ -129,9 +129,11 @@ export default {
         },
 
         redirectStandby: function(){
-
-            this.$router.push('/screen_standby');
-
+            
+            setInterval(() => {
+                this.$router.push('/screen_standby');
+            }, 3000);
+            
         },
 
         verifyQuestions: function(){
@@ -175,12 +177,7 @@ export default {
 
                 fullHour.toString(); 
 
-                //console.log(fullDate)
-                //console.log(fullHour)
-
-                //console.log(this.$store.state.usuario.id)
-
-                let body = [{
+                let bodyRealised = [{
                     date: fullDate,
                     hour: fullHour,
                     hourFinish: hourFinish,
@@ -196,36 +193,36 @@ export default {
                     statusMaint: this.$store.state.machine.statusMaint
                 }
                 
-                this.$axios.post(this.$store.state.BASE_URL + "/releasemachines/", body).then((response) => {
+                console.log(bodyRealised)
+                console.log(bodyMachine)
 
+                this.showModalReleasedBar();
+                
+                //Post para a API REALISED MACHINES
+                this.$axios.post(this.$store.state.BASE_URL + "/releasemachines/", bodyRealised).then((response) => {
+
+                    console.log("Inserção nas maquinas liberadas")
+                    
                     let teste = []
                     let idrealesed = 0
 
                     teste.push(response.data[0])
 
                     idrealesed = teste[0].id
-
+                    
                     this.$store.dispatch("SET_ID_REALISED", idrealesed);
 
-                }).catch((error) => {
-                    console.log(error)
                 })
 
+                //Post para a Atualização da máquina
+                this.$axios.put(this.$store.state.BASE_URL + "/machines/" + this.$store.state.idmachine + "/", bodyMachine).then(() =>{
 
-                this.$axios.put(this.$store.state.BASE_URL + "/machines/" + this.$store.state.idmachine + "/", bodyMachine).then((response) => {
+                    console.log("Atualização na máquina")
 
-                    //alert("Alterado com sucesso")
-
-                }).catch((error) => {
-                    console.log(error);
-                })
-
-                this.showModalReleasedBar();
-                
-                setTimeout(() => {
                     this.redirectStandby();
-                }, 3000);
-            
+
+                })
+                
             }
 
         }

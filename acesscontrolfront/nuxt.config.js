@@ -51,7 +51,7 @@ export default {
             propertyName: "auth_token"
           },
           logout:{
-            url: "http://localhost:8000/api/version/authentication/token/logout/",
+            url: "http://locahost:8000/api/version/authentication/token/logout/",
             method: "post",
             propertyName: "auth_token"
           },

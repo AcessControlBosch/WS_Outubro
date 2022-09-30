@@ -32,6 +32,22 @@
 
         },
 
+        beforeCreate(){
+
+            this.$axios.get(this.$store.state.BASE_URL + "/releasemachines/" + this.$store.state.idrealised).then((response) => {
+
+                this.dataMachine = response.data
+                console.log(this.dataMachine)
+
+            }).catch((error) =>{
+
+                console.log(error)
+
+            })
+
+
+        },
+
         methods:{
 
             updateMachinesFields: function(){
@@ -47,18 +63,25 @@
 
                 fullHour.toString(); 
 
-                bodyUpdate = {
-                    hourFinish: fullHour
-                },  
+                let bodyUpdate = {
+                    date: this.dataMachine.date,
+                    hour: this.dataMachine.hour,
+                    hourFinish: fullHour,
+                    id: this.dataMachine.id,
+                    idAssociateFK: this.$store.state.usuario.id,
+                    idMachineFK: this.$store.state.machine.id
+                }
 
-                this.$axios.patch(this.$store.state.BASE_URL + "/releasemachines/" + this.$store.state.idrealesed + '/', bodyUpdate).then((response) => {
-                   
-                    console.log(response)
+                console.log(bodyUpdate)
+
+                //Atualização na hora em que a máquina foi desligada
+                this.$axios.put(this.$store.state.BASE_URL + "/releasemachines/" + this.$store.state.idrealised + "/", bodyUpdate).then((response) => {
+
+                    console.log("Ai caliquinha, deu bom!")
                     this.$router.push("/screen_home")
 
-                }).catch((error) =>{
-                    console.log(error)
                 })
+
 
             },
 
@@ -71,15 +94,17 @@
                     ipaddress: this.$store.state.machine.ipaddress,
                     statusMaint: this.$store.state.machine.statusMaint
                 }
-
+                
+                console.log(bodyMachine);
+                
+                //Atualização para desligar a máquina
                 this.$axios.put(this.$store.state.BASE_URL + "/machines/" + this.$store.state.idmachine + "/", bodyMachine).then((response) => {
 
+                    console.log("Atualização ná maquina");
                     this.updateMachinesFields();
 
                 }).catch((error) => {
-
-                    console.log(error);
-
+                    console.log(error)
                 })
 
             },

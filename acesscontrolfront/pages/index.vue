@@ -57,75 +57,55 @@ export default {
 
   },
 
+  beforeCreate(){
+
+    this.$axios.get(this.$store.state.BASE_URL + "/associates").then((response) =>{
+
+      this.dataUser = response.data;
+      //console.log(this.dataUser)
+
+    }).catch((response) => {
+      console.log(response)
+    })
+
+  },
+
   methods: {
 
-    //funcao para setar usuário
     setUser: async function(){
+
+      console.log(this.user.username)
 
       let increment = 0;
 
       for(increment; increment < this.dataUser.length; increment++){
 
-        if(this.dataUser[increment].EDV == this.user.username){
+        console.log(this.dataUser[increment].EDV)
 
-          await this.$store.dispatch("SET_USER", this.dataUser[increment]);
+        if(this.dataUser[increment].EDV === this.user.username){
           
-          if(this.dataUser[increment].adminU === true){
-            this.$store.dispatch("SET_ADMIN", true);
-          }
+          await this.$store.dispatch("SET_USER", this.dataUser[increment])
 
-          if(this.dataUser[increment].skill === true){
-
-            this.$store.dispatch("SET_SKILL", true);
-          
-          } else {
-
-            this.$store.dispatch("SET_SKILL", false);
-            
-          }
-
-          break;
-          
         }
 
-      }
+      } 
 
     },
 
-    //funcao para buscar usuarios
-    searchUser: async function(){
-
-        await this.$axios.get(this.$store.state.BASE_URL + "/users").then((response) =>{
-
-          this.dataUser = response.data;
-
-          this.setUser();
-    
-        }).catch((error) => {
-          console.log("Vish, deu ruim!");
-          console.log(error);
-        });
-
-        
-    },
-
-    //função para fazer login
+    //FUNÇÃO QUE REALIZA O LOGIN
     makeLogin: async function(){
 
       if(this.user.username && this.user.password){
 
-        this.$auth.loginWith(
-          
-          "local", {data: this.user})
-          .then((response) => {
-            
-            this.searchUser();
+        this.$auth.loginWith("local", {data: this.user}).then((response) => {
 
-            //console.log("Usuário Logado")
+          this.setUser();
+
+          console.log("Usuário Logado")
 
         }).catch((response) =>{
 
-          console.log('response',response)
+          console.log(response)
           alert("Login Incorreto!")
 
         })

@@ -41,28 +41,16 @@ export default {
 
   beforeCreate() {
 
-    //Função para setar o tipo de redirecionamento (adm, comum e redirecionamento para logout)
-    //Se for admin e possui habilidade
-    if(this.$store.state.usuario.skill === true && this.$store.state.usuario.adminU === true){
+    console.log(this.$store.state.usuario)
+
+    if(this.$store.state.usuario.skill === false){
       
-      this.$router.push('/screen_redirectAdmin');
+      alert("Usuário não tem a permissão para utilizar a máquina!")
+      this.$auth.logout()
     
-    //Se for admin
-    } else if(this.$store.state.usuario.adminU === true){
-
-      this.$router.push('/screen_admin')
-
-    //Se não possui habilidade
-    } else if(this.$store.state.usuario.skill === false){
-
-      this.$auth.logout();
-      this.$store.dispatch("SET_USER", {});
-      alert("Não possui habilidade")
-
-    //Se possui habilidade
     } else {
 
-      //alert("Possui habilidade")
+      console.log("Tem a permissão")
 
     }
 

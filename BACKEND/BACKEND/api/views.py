@@ -6,163 +6,79 @@ from rest_framework.response import Response
 from django.http import HttpResponseRedirect
 from rest_framework.permissions import IsAuthenticated
 
-class UserAPI(APIView):
+#------------------------------------------------------------
+#----------------------------Job Position--------------------
+#------------------------------------------------------------
 
-    def get(self, request, pk=""):
+class JobPositionAPI(APIView):
+
+    def get(self, request, pk=''):
 
         if 'name' in request.GET:
             currentlyName = request.GET['name']
-            users = User.objects.filter(name__contains=currentlyName)
-            serializer = UserTable(users, many=True)
+            jobPosition = JobPosition.objects.filter(name__contains=currentlyName)
+            serializer = JobPositionTable(jobPosition, many=True)
             return Response(serializer.data)
-
-        elif 'user' in request.GET:
-            currentlyUser = request.GET['user']
-            users = User.objects.filter(idUser=currentlyUser)
-            serializer = UserTable(users, many=True)
-            return Response(serializer.data)
-
+        
         elif pk == '':
-            users = User.objects.all()
-            serializer = UserTable(users, many=True)
+            jobPosition = JobPosition.objects.all()
+            serializer = JobPositionTable(jobPosition, many=True)
             return Response(serializer.data)
 
         else:
-            users = User.objects.get(id_card=pk)
-            serializer = UserTable(users)
+            jobPosition = JobPosition.objects.get(id_card=pk)
+            serializer = JobPositionTable(jobPosition)
             return Response(serializer.data)
-
+    
     def post(self, request):
 
-        serializer = UserTable(data=request.data, many=True)
+        serializer = JobPositionTable(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()        
         return Response({"msg": "Inserido com sucesso"})
 
+    
     def put(self, request, pk=''):
 
-        users = User.objects.get(id=pk)
-        serializer = UserTable(users, data=request.data)
+        jobPosition = JobPosition.objects.get(id=pk)
+        serializer = JobPositionTable(jobPosition, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
     def delete(self, request, pk=''):    
 
-        users = User.objects.get(id=pk)       
-        users.delete()
+        jobPosition = JobPosition.objects.get(id=pk)       
+        jobPosition.delete()
         return Response({"msg": "Apagado com sucesso"})
 
-class UserIdAPI(APIView):
+#------------------------------------------------------------
+#----------------------------Associate-----------------------
+#------------------------------------------------------------
+class AssociateAPI(APIView):
+
     def get(self, request, pk=""):
-        if pk == '':
-            users = User.objects.all()
-            serializer = UserTableID(users, many=True)
-            return Response(serializer.data)
-
-        else:
-            users = User.objects.get(id_card=pk)
-            serializer = UserTableID(users)
-            return Response(serializer.data)
-
-
-
-
-class ApprenticeAPI(APIView):
-
-    def get(self, request, pk="", idApprenticeEFK = '', name=''):
 
         if 'name' in request.GET:
             currentlyName = request.GET['name']
-            apprentice = Apprentice.objects.filter(name__contains=currentlyName)
-            serializer = ApprenticeTable(apprentice, many=True)
+            associate = Associate.objects.filter(name__contains=currentlyName)
+            serializer = Associate(associate, many=True)
             return Response(serializer.data)
 
-        elif 'idApprenticeEFK' in request.GET:
-            currentlyID = request.GET['idApprenticeFK']
-            apprentice = Apprentice.objects.filter(name__contains=currentlyID)
-            serializer = ApprenticeTable(apprentice, many=True)
+        elif 'user' in request.GET:
+            currentlyUser = request.GET['user']
+            associate = Associate.objects.filter(idUser=currentlyUser)
+            serializer = AssociateTable(associate, many=True)
             return Response(serializer.data)
-        
+
         elif pk == '':
-            apprentice = Apprentice.objects.all()
-            serializer = ApprenticeTable(apprentice, many=True)
+            associate = Associate.objects.all()
+            serializer = AssociateTable(associate, many=True)
             return Response(serializer.data)
 
         else:
-            apprentice = Apprentice.objects.get(idApprenticeFK=pk)
-            serializer = ApprenticeTable(apprentice)
-            return Response(serializer.data)
-            
-
-    def post(self, request):
-
-        serializer = ApprenticeTableNumber(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()        
-        return Response({"msg": "Inserido com sucesso"})
-
-    def put(self, request, pk=''):
-
-        apprentices = Apprentice.objects.get(id=pk)
-        serializer = ApprenticeTableNumber(apprentices, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    def delete(self, request, pk=''):
-
-        apreentice = Apprentice.objects.get(id=pk)       
-        apreentice.delete()
-        return Response({"msg": "Apagado com sucesso"})
-
-class typeAssocienteAPI(APIView):
-
-    def get(self, request, pk=""):
-
-        if pk == '':
-            typeAssocienteResult = typeAssociente.objects.all()
-            serializer = typeAssocienteTable(typeAssocienteResult, many=True)
-            return Response(serializer.data)
-
-        else:
-            typeAssocienteResult = User.objects.get(id=pk)
-            serializer = typeAssocienteTable(typeAssocienteResult)
-            return Response(serializer.data)
-    
-    def post(self, request):
-
-        serializer = typeAssocienteTable(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()        
-        return Response({"msg": "Inserido com sucesso"})
-
-    def put(self, request, pk=""):
-
-        typeAssocienteResults = typeAssociente.objects.get(id=pk)
-        serializer = typeAssocienteTable(typeAssocienteResults, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    
-    def delete(self, request, pk=""):
-
-        typeAssocienteResults = typeAssociente.objects.get(id=pk)       
-        typeAssocienteResults.delete()
-        return Response({"msg": "Apagado com sucesso"})
-
-class AssociateAPI(APIView):
-
-    def get(self, request, pk=''):
-
-        if pk == '':
-            associateResult = Associate.objects.all()
-            serializer = AssociateTable(associateResult, many=True)
-            return Response(serializer.data)
-
-        else:
-            associateResult = Associate.objects.get(idAssociateFK=pk)
-            serializer = AssociateTable(associateResult)
+            associate = Associate.objects.get(id_card=pk)
+            serializer = AssociateTable(associate)
             return Response(serializer.data)
 
     def post(self, request):
@@ -171,22 +87,24 @@ class AssociateAPI(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()        
         return Response({"msg": "Inserido com sucesso"})
-    
+
     def put(self, request, pk=''):
 
-        AssocienteResults = Associate.objects.get(id=pk)
-        serializer = AssociateTable(AssocienteResults, data=request.data)
+        associate = Associate.objects.get(id=pk)
+        serializer = AssociateTable(associate, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-    
-    def delete(self, request, pk=''):
 
-        AssocienteResults = Associate.objects.get(id=pk)       
-        AssocienteResults.delete()
+    def delete(self, request, pk=''):    
+
+        associate = Associate.objects.get(id=pk)       
+        associate.delete()
         return Response({"msg": "Apagado com sucesso"})
 
-
+#------------------------------------------------------------
+#----------------------------Machine-------------------------
+#------------------------------------------------------------
 class MachineAPI(APIView):
 
     def get(self, request, pk=''):
@@ -222,8 +140,9 @@ class MachineAPI(APIView):
         machineResult.delete()
         return Response({"msg": "Apagado com sucesso"})
 
-
-
+#------------------------------------------------------------
+#----------------------------Question------------------------
+#------------------------------------------------------------
 class QuestionAPI(APIView):
 
     def get(self, request, pk=''):
@@ -259,41 +178,9 @@ class QuestionAPI(APIView):
         questionResult.delete()
         return Response({"msg": "Apagado com sucesso"})
 
-class CourseAPI(APIView):
-
-    def get(self, request, pk=''):
-
-        if pk == '':
-            courseResult = Courses.objects.all()
-            serializer = CoursesTable(courseResult, many=True)
-            return Response(serializer.data)
-
-        else:
-            courseResult = Courses.objects.get(id=pk)
-            serializer = CoursesTable(courseResult)
-            return Response(serializer.data)
-
-    def post(self, request):
-
-        serializer = CoursesTable(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()        
-        return Response({"msg": "Inserido com sucesso"})
-    
-    def put(self, request, pk=''):
-
-        courseResult = Courses.objects.get(id=pk)
-        serializer = CoursesTable(courseResult, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    
-    def delete(self, request, pk=''):
-
-        courseResult = Courses.objects.get(id=pk)       
-        courseResult.delete()
-        return Response({"msg": "Apagado com sucesso"})
-
+#------------------------------------------------------------
+#----------------------------Green Book----------------------
+#------------------------------------------------------------
 class GreenBookAPI(APIView):
 
     def get(self, request, pk='', tq=''):
@@ -330,184 +217,9 @@ class GreenBookAPI(APIView):
         greenBookResult.delete()
         return Response({"msg": "Apagado com sucesso"})
 
-class MaintenanceAPI(APIView):
-
-    def get(self, request, pk=''):
-
-        if pk == '':
-            maintenanceResult = Maintenance.objects.all()
-            serializer = MaintenanceTable(maintenanceResult, many=True)
-            return Response(serializer.data)
-
-        else:
-            maintenanceResult = Maintenance.objects.get(id=pk)
-            serializer = MaintenanceTable(maintenanceResult)
-            return Response(serializer.data)
-
-    def post(self, request):
-
-        serializer = MaintenanceTable(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()        
-        return Response({"msg": "Inserido com sucesso"})
-    
-    def put(self, request, pk=''):
-
-        maintenanceResult = Maintenance.objects.get(id=pk)
-        serializer = MaintenanceTable(maintenanceResult, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    
-    def delete(self, request, pk=''):
-
-        maintenanceResult = Maintenance.objects.get(id=pk)       
-        maintenanceResult.delete()
-        return Response({"msg": "Apagado com sucesso"})
-
-class ReleaseMachineAPI(APIView):
-
-    def get(self, request, pk=''):
-
-        if pk == '':
-            releaseMachineTableResult = ReleaseMachine.objects.all()
-            serializer = GetReleaseMachineTable(releaseMachineTableResult, many=True)
-            return Response(serializer.data)
-
-        else:
-            releaseMachineTableResult = ReleaseMachine.objects.get(id=pk)
-            serializer = GetReleaseMachineTable(releaseMachineTableResult)
-            return Response(serializer.data)
-
-    def post(self, request):
-
-        serializer = ReleaseMachineTable(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()        
-        return Response({"msg": "Inserido com sucesso"})
-    
-    def put(self, request, pk=''):
-
-        releaseMachineTableResult = ReleaseMachine.objects.get(id=pk)
-        serializer = ReleaseMachineTable(releaseMachineTableResult, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    
-    def delete(self, request, pk=''):
-
-        releaseMachineTableResult = ReleaseMachine.objects.get(id=pk)       
-        releaseMachineTableResult.delete()
-        return Response({"msg": "Apagado com sucesso"})
-
-
-class QRcodeAPI(APIView):
-
-    def get(self, request, pk=''):
-
-        if pk == '':
-            QRcodeTableResult = QRcode.objects.all()
-            serializer = QRcodeTable(QRcodeTableResult, many=True)
-            return Response(serializer.data)
-
-        else:
-            QRcodeTableResult = QRcode.objects.get(id=pk)
-            serializer = QRcodeTable(QRcodeTableResult)
-            return Response(serializer.data)
-
-    def post(self, request):
-
-        serializer = QRcodeTable(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()        
-        return Response({"msg": "Inserido com sucesso"})
-    
-    def put(self, request, pk=''):
-
-        QRcodeTableResult = QRcode.objects.get(id=pk)
-        serializer = QRcodeTable(QRcodeTableResult, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    
-    def delete(self, request, pk=''):
-
-        QRcodeTableResult = QRcode.objects.get(id=pk)       
-        QRcodeTableResult.delete()
-        return Response({"msg": "Apagado com sucesso"})
-
-
-class ObservationAPI(APIView):
-
-    def get(self, request, pk=''):
-
-        if pk == '':
-            ObservationResult = Observation.objects.all()
-            serializer = ObservationTable(ObservationResult, many=True)
-            return Response(serializer.data)
-
-        else:
-            ObservationResult = Observation.objects.get(id=pk)
-            serializer = ObservationTable(ObservationResult)
-            return Response(serializer.data)
-
-    def post(self, request):
-
-        serializer = ObservationTable(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()        
-        return Response({"msg": "Inserido com sucesso"})
-    
-    def put(self, request, pk=''):
-
-        ObservationResult = Observation.objects.get(id=pk)
-        serializer = ObservationTable(ObservationResult, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    
-    def delete(self, request, pk=''):
-
-        ObservationResult = Observation.objects.get(id=pk)       
-        ObservationResult.delete()
-        return Response({"msg": "Apagado com sucesso"})
-
-class MaintenanceOrderAPI(APIView):
-
-    def get(self, request, pk=''):
-
-        if pk == '':
-            MaintenanceOrderTableResult = MaintenanceOrder.objects.all()
-            serializer = MaintenanceOrderTable(MaintenanceOrderTableResult, many=True)
-            return Response(serializer.data)
-
-        else:
-            MaintenanceOrderTableResult = MaintenanceOrder.objects.get(id=pk)
-            serializer = MaintenanceOrderTable(MaintenanceOrderTableResult)
-            return Response(serializer.data)
-
-
-    def post(self, request):
-
-        serializer = MaintenanceOrderTable(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()        
-        return Response({"msg": "Inserido com sucesso"})
-    
-    def put(self, request, pk=''):
-
-        MaintenanceOrderTableResult = MaintenanceOrder.objects.get(id=pk)
-        serializer = MaintenanceOrderTable(MaintenanceOrderTableResult, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    
-    def delete(self, request, pk=''):
-
-        MaintenanceOrderTableResult = MaintenanceOrder.objects.get(id=pk)       
-        MaintenanceOrderTableResult.delete()
-        return Response({"msg": "Apagado com sucesso"})
-
+#------------------------------------------------------------
+#----------------------------Areas---------------------------
+#------------------------------------------------------------
 class AreaAPI(APIView):
 
     def get(self, request, pk=''):
@@ -544,38 +256,156 @@ class AreaAPI(APIView):
         AreaResult.delete()
         return Response({"msg": "Apagado com sucesso"})
 
-class RequestLoginAPI(APIView):
+#------------------------------------------------------------
+#--------------------------Maintenance-----------------------
+#------------------------------------------------------------
+class MaintenanceAPI(APIView):
 
     def get(self, request, pk=''):
 
         if pk == '':
-            RequestLoginResult = RequestLogin.objects.all()
-            serializer = RequestLoginTable(RequestLoginResult, many=True)
+            maintenanceResult = Maintenance.objects.all()
+            serializer = MaintenanceTable(maintenanceResult, many=True)
             return Response(serializer.data)
 
         else:
-            RequestLoginResult = RequestLogin.objects.get(id=pk)
-            serializer = RequestLoginTable(RequestLoginResult)
+            maintenanceResult = Maintenance.objects.get(id=pk)
+            serializer = MaintenanceTable(maintenanceResult)
             return Response(serializer.data)
-
 
     def post(self, request):
 
-        serializer = RequestLoginTable(data=request.data, many=True)
+        serializer = MaintenanceTable(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()        
         return Response({"msg": "Inserido com sucesso"})
     
     def put(self, request, pk=''):
 
-        RequestLoginResult = RequestLogin.objects.get(id=pk)
-        serializer = RequestLoginTable(RequestLoginResult, data=request.data)
+        maintenanceResult = Maintenance.objects.get(id=pk)
+        serializer = MaintenanceTable(maintenanceResult, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
     
     def delete(self, request, pk=''):
 
-        RequestLoginResult = RequestLogin.objects.get(id=pk)       
+        maintenanceResult = Maintenance.objects.get(id=pk)       
+        maintenanceResult.delete()
+        return Response({"msg": "Apagado com sucesso"})
+
+#------------------------------------------------------------
+#-----------------------ReleaseMachine-----------------------
+#------------------------------------------------------------
+class ReleaseMachineAPI(APIView):
+
+    def get(self, request, pk=''):
+
+        if pk == '':
+            releaseMachineTableResult = ReleaseMachine.objects.all()
+            serializer = ReleaseMachineTable(releaseMachineTableResult, many=True)
+            return Response(serializer.data)
+
+        else:
+            releaseMachineTableResult = ReleaseMachine.objects.get(id=pk)
+            serializer = ReleaseMachineTable(releaseMachineTableResult)
+            return Response(serializer.data)
+
+    def post(self, request):
+
+        serializer = ReleaseMachineTable(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()        
+        return Response({"msg": "Inserido com sucesso"})
+    
+    def put(self, request, pk=''):
+
+        releaseMachineTableResult = ReleaseMachine.objects.get(id=pk)
+        serializer = ReleaseMachineTable(releaseMachineTableResult, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    
+    def delete(self, request, pk=''):
+
+        releaseMachineTableResult = ReleaseMachine.objects.get(id=pk)       
+        releaseMachineTableResult.delete()
+        return Response({"msg": "Apagado com sucesso"})
+
+#------------------------------------------------------------
+#-----------------------Observation--------------------------
+#------------------------------------------------------------
+class ObservationAPI(APIView):
+
+    def get(self, request, pk=''):
+
+        if pk == '':
+            ObservationResult = Observation.objects.all()
+            serializer = ObservationTable(ObservationResult, many=True)
+            return Response(serializer.data)
+
+        else:
+            ObservationResult = Observation.objects.get(id=pk)
+            serializer = ObservationTable(ObservationResult)
+            return Response(serializer.data)
+
+    def post(self, request):
+
+        serializer = ObservationTable(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()        
+        return Response({"msg": "Inserido com sucesso"})
+    
+    def put(self, request, pk=''):
+
+        ObservationResult = Observation.objects.get(id=pk)
+        serializer = ObservationTable(ObservationResult, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    
+    def delete(self, request, pk=''):
+
+        ObservationResult = Observation.objects.get(id=pk)       
+        ObservationResult.delete()
+        return Response({"msg": "Apagado com sucesso"})
+
+#------------------------------------------------------------
+#-----------------------Login--------------------------------
+#------------------------------------------------------------
+
+class LoginAPI(APIView):
+
+    def get(self, request, pk=''):
+
+        if pk == '':
+            RequestLoginResult = Login.objects.all()
+            serializer = LoginTable(RequestLoginResult, many=True)
+            return Response(serializer.data)
+
+        else:
+            RequestLoginResult = Login.objects.get(id=pk)
+            serializer = LoginTable(RequestLoginResult)
+            return Response(serializer.data)
+
+
+    def post(self, request):
+
+        serializer = LoginTable(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()        
+        return Response({"msg": "Inserido com sucesso"})
+    
+    def put(self, request, pk=''):
+
+        RequestLoginResult = Login.objects.get(id=pk)
+        serializer = LoginTable(RequestLoginResult, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    
+    def delete(self, request, pk=''):
+
+        RequestLoginResult = LoginTable.objects.get(id=pk)       
         RequestLoginResult.delete()
         return Response({"msg": "Apagado com sucesso"})
